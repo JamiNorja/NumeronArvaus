@@ -1,36 +1,52 @@
 import { StatusBar } from 'expo-status-bar';
-import React, { useState } from 'react';
-import { StyleSheet, View, Text, Button, TextInput } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { StyleSheet, View, Text, Button, TextInput, Alert } from 'react-native';
 
+let random;
+let guesses;
 
 export default function App() {
 
   const [number, setNumber] = useState('');
-  const arvattava = Math.floor(Math.random() * 100) + 1;
-  console.log(arvattava);
+  const [text, setText] = useState('');
+  
+  const start = () => {
+    setText('Guess a number between 1-100');
+    guesses = 0;
+    random = Math.floor(Math.random() * 100) + 1;
+    console.log ('Secret:', random);
+  }
+
+  useEffect(() => {
+    start();
+  }, [])
 
   const guess = () => {
     arvaus = number;
     console.log(number);
-    
-    teksti= " ";
+    guesses++;
+
     if (arvaus == " ") {
-      teksti = "Guess a number between 1-100"
+      setText("Guess a number between 1-100")
     }
-    if (arvaus < arvattava) {
-      teksti = "Your guess " + arvaus + " is too low";
-    } else if (arvaus > arvattava) {
-      teksti = "Your guess " + arvaus + " is too high";
+    if (arvaus < random) {
+      setText("Your guess " + arvaus + " is too low");
+      setNumber('');
+    } else if (arvaus > random) {
+      setText("Your guess " + arvaus + " is too high");
+      setNumber('');
     }else {
-      teksti = "You guessed the number in " + lkm + " guesses";
+      Alert.alert('You guessed the number ' + random + ' in ' + guesses + ' guesses!')
+      setNumber('');
+      start();
     }
 
   }
 
   return (
     <View style={styles.container}>
-      <Text>{teksti}</Text>
-      <TextInput style={styles.input} id='arvaus' onChangeText={number => setNumber(number)} value={number} keyboardType='number-pad'/>
+      <Text style={styles.title}>{text}</Text>
+      <TextInput style={styles.input} onChangeText={text => setNumber(text)} value={number} keyboardType='number-pad'/>
       <Button onPress={guess} title="Make guess"/>
       <StatusBar style="auto" />
     </View>
@@ -47,7 +63,7 @@ const styles = StyleSheet.create({
   input : {
     marginTop:10,
     marginBottom: 10,
-    width:150,
+    width:50,
     borderColor: 'gray', 
     borderWidth: 1
   },
